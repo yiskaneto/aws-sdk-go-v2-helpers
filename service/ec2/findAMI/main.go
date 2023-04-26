@@ -37,9 +37,9 @@ func main() {
 	}
 
 	amiList := make(map[string]string, 0)
-	// if &getAMIs.Images == nil {
-	// 	log.Fatal("\n\n\nNo Images were found for image with tag Name: %s\n\n\n", amiNameTag)
-	// }
+	if len(getAMIs.Images) == 0 {
+		log.Fatalf("\n\nERROR: No images were found containing the tag Name: %s\n\n", amiNameTag)
+	}
 	for _, v := range getAMIs.Images {
 		amiList[*v.CreationDate] = *v.ImageId
 	}

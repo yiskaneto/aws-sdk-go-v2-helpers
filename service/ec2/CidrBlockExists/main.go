@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"math/rand"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -27,7 +26,7 @@ func (cidr *existingCidrBlks) appendCidrBlk(cidrItem string) (updatedCidrBlks []
 
 func main() {
 	defaultCidrBlks := existingCidrBlks{
-		cidrBlks: []string{"10.10.0.0/16", "10.11.0.0/16", "10.12.0.0/16", "172.31.0.0/16"},
+		cidrBlks: []string{"10.10.0.0/16", "10.11.0.0/16", "10.12.0.0/16", "172.31.0.0/16", "10.36.0.0/16", "10.37.0.0/16"},
 	}
 	ctx := context.TODO()
 	cfg, err := config.LoadDefaultConfig(ctx)
@@ -95,38 +94,54 @@ func CheckAllCidrBlocks(filter *ec2.DescribeVpcsOutput) (allCidrs []string) {
 // GetNewCidrBlock returns an unsed CIDR block from a given lists
 func GetNewCidrBlock(currentCidr []string) (finalCidr string) {
 	cidrList := []string{
-		"10.36.0.0/16",
-		"10.37.0.0/16",
-		"10.38.0.0/16",
-		"10.39.0.0/16",
-		"10.40.0.0/16",
-		"10.41.0.0/16",
-		"10.42.0.0/16",
-		"10.43.0.0/16",
-		"10.44.0.0/16",
-		"10.45.0.0/16",
-		"10.46.0.0/16",
-		"10.47.0.0/16",
-		"10.48.0.0/16",
-		"10.49.0.0/16",
-		"10.50.0.0/16",
-		"10.51.0.0/16",
-		"10.52.0.0/16",
-		"10.53.0.0/16",
-		"10.54.0.0/16",
-		"10.55.0.0/16",
-		"10.56.0.0/16",
-		"10.57.0.0/16",
-		"10.58.0.0/16",
-		"10.59.0.0/16",
-		"10.60.0.0/16",
+		"10.100.0.0/16",
+		"10.101.0.0/16",
+		"10.102.0.0/16",
+		"10.103.0.0/16",
+		"10.104.0.0/16",
+		"10.105.0.0/16",
+		"10.106.0.0/16",
+		"10.107.0.0/16",
+		"10.108.0.0/16",
+		"10.109.0.0/16",
+		"10.110.0.0/16",
+		"10.111.0.0/16",
+		"10.112.0.0/16",
+		"10.113.0.0/16",
+		"10.114.0.0/16",
+		"10.115.0.0/16",
+		"10.116.0.0/16",
+		"10.117.0.0/16",
+		"10.118.0.0/16",
+		"10.119.0.0/16",
+		"10.120.0.0/16",
+		"10.121.0.0/16",
+		"10.122.0.0/16",
+		"10.123.0.0/16",
+		"10.124.0.0/16",
+		"10.125.0.0/16",
 	}
-	randomIndex := rand.Intn(len(cidrList))
-	if !slices.Contains(currentCidr, cidrList[randomIndex]) {
-		finalCidr = cidrList[randomIndex]
-		log.Printf("SUCCESS: Assigning new available CIDR block: %s", cidrList[randomIndex])
-	} else {
-		log.Fatal("ERROR: No cidr availables")
+
+	for _, CB := range cidrList {
+		if slices.Contains(currentCidr, CB) {
+			continue
+		} else if !slices.Contains(currentCidr, CB) {
+			finalCidr = CB
+			log.Printf("SUCCESS: Assigning new available CIDR block: %s", finalCidr)
+			break
+		}
 	}
+	if finalCidr == "" {
+		log.Fatal("ERROR: No available cidr, consider expanding the CIDR block on GetNewCidrBlock")
+	}
+
+	// The approach below is based on a random selection, but is not the best option:
+	// randomIndex := rand.Intn(len(cidrList))
+	// if !slices.Contains(currentCidr, cidrList[randomIndex]) {
+	// 	finalCidr = cidrList[randomIndex]
+	// 	log.Printf("SUCCESS: Assigning new available CIDR block: %s", cidrList[randomIndex])
+	// } else {
+	// 	log.Fatal("ERROR: No cidr availables")
+	// }
 	return
 }

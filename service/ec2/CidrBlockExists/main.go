@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	cidrBlocku string = "172.31.0.0/16"
-	vpcID      string = "vpc-invalidVPC"
+	cidrBlocku      string   = "172.31.0.0/16"
+	DefaultCidrBlks []string = []string{"172.31.0.0/16", "172.32.0.0/16"}
+	vpcID           string   = "vpc-invalidVPC"
 )
 
 type existingCidrBlks struct {
@@ -30,17 +31,14 @@ func (cidr *existingCidrBlks) appendCidrBlk(cidrItem string) (updatedCidrBlks []
 }
 
 func main() {
-	defaultCidrBlks := existingCidrBlks{
-		cidrBlks: []string{"10.10.0.0/16", "10.11.0.0/16", "10.12.0.0/16", "172.31.0.0/16", "10.36.0.0/16", "10.37.0.0/16"},
-	}
 	ctx := context.TODO()
 	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	CheckAWSError(err)
+
+	// Initialize ec2 client
 	ec2Client := ec2.NewFromConfig(cfg)
 
-	// We can create an empty Input object
+	// Optionallu, we can create an empty Input object
 	filtro := &ec2.DescribeVpcsInput{}
 
 	// Or we can create the DescribeVpcsInput with a filter
@@ -53,24 +51,17 @@ func main() {
 	// 	},
 	// }
 
+	// Now we attempt to fetch the vpc information in the current region
 	vpcDescribe, err := ec2Client.DescribeVpcs(ctx, filtro)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	CheckAWSError(err)
 
+	// Get the current subnets and their vpc associations.
 	currentCidrBlocks := make([]string, 0)
 	for _, v := range vpcDescribe.Vpcs {
 		vpcInfo := fmt.Sprintf("%s associated to %s", *v.CidrBlock, *v.VpcId)
 		currentCidrBlocks = append(currentCidrBlocks, vpcInfo)
 	}
-
-	// Optionally, we can directly access the fields of a VPC type:
-	// log.Printf("VPC %s contains CIDR block %s", *vpcDescribe.Vpcs[0].VpcId, *vpcDescribe.Vpcs[0].CidrBlock)
-	listCurrentCidrBlocks := CheckAllCidrBlocks(vpcDescribe)
-	for _, v := range listCurrentCidrBlocks {
-		defaultCidrBlks.appendCidrBlk(v)
-	}
-	GetNewCidrBlock(defaultCidrBlks.cidrBlks)
+	GetNewCidrBlock(vpcDescribe)
 }
 
 func CheckCidrBlock(filter *ec2.DescribeVpcsOutput, currentCidrBlocks []string) string {
@@ -88,6 +79,19 @@ func CheckCidrBlock(filter *ec2.DescribeVpcsOutput, currentCidrBlocks []string) 
 	return "The provided CIDR block is available, continuing..."
 }
 
+//// Generate a new CIDR block, 3 functions
+
+// genNewCidrBlk calls GenerateNewCidrBlock to get an unused cidr block
+func genNewCidrBlk(ctx *context.Context, cfg *aws.Config) string {
+	ec2Client := ec2.NewFromConfig(*cfg)
+	vpcDescribe, err := ec2Client.DescribeVpcs(*ctx, &ec2.DescribeVpcsInput{})
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return GetNewCidrBlock(vpcDescribe)
+}
+
+// CheckAllCidrBlocks return all the current cidr blocks in the current account
 func CheckAllCidrBlocks(filter *ec2.DescribeVpcsOutput) (allCidrs []string) {
 	allCidrs = make([]string, 0)
 	for _, v := range filter.Vpcs {
@@ -97,7 +101,11 @@ func CheckAllCidrBlocks(filter *ec2.DescribeVpcsOutput) (allCidrs []string) {
 }
 
 // GetNewCidrBlock returns an unsed CIDR block from a given lists
-func GetNewCidrBlock(currentCidr []string) (finalCidr string) {
+func GetNewCidrBlock(filter *ec2.DescribeVpcsOutput) (finalCidr string) {
+	listCurrentCidrBlocks := CheckAllCidrBlocks(filter)
+	for _, v := range listCurrentCidrBlocks {
+		DefaultCidrBlks = append(DefaultCidrBlks, v)
+	}
 	cidrList := []string{
 		"10.100.0.0/16",
 		"10.101.0.0/16",
@@ -128,9 +136,9 @@ func GetNewCidrBlock(currentCidr []string) (finalCidr string) {
 	}
 
 	for _, CB := range cidrList {
-		if slices.Contains(currentCidr, CB) {
+		if slices.Contains(DefaultCidrBlks, CB) {
 			continue
-		} else if !slices.Contains(currentCidr, CB) {
+		} else if !slices.Contains(DefaultCidrBlks, CB) {
 			finalCidr = CB
 			log.Printf("SUCCESS: Assigning new available CIDR block: %s", finalCidr)
 			break

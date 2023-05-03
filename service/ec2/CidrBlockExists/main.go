@@ -199,11 +199,11 @@ func SearchAmiID(ctx *context.Context, cfg *aws.Config, amiNameTag string) strin
 	return amiList[maxDate]
 }
 
-// DeregisterAmiId attetmps to deregister the passed ami
+// RemoveAmiId attetmps to deregister the passed ami
 // example on how to use it with the help of the SearchAmiID()
 // myAMI := SearchAmiID(ctx, cfg, "coolest-tag")
-// DeregisterAmiId(*ctx, *cfg, &myAMI)
-func DeregisterAmiId(ctx context.Context, cfg aws.Config, amiID *string) {
+// RemoveAmiId(*ctx, *cfg, &myAMI)
+func RemoveAmiId(ctx context.Context, cfg aws.Config, amiID *string) {
 	ec2Client := ec2.NewFromConfig(cfg)
 	filtro := &ec2.DeregisterImageInput{
 		ImageId: amiID,

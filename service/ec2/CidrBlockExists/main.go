@@ -2,11 +2,16 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/aws/smithy-go"
 	"golang.org/x/exp/slices"
 )
 
@@ -144,4 +149,72 @@ func GetNewCidrBlock(currentCidr []string) (finalCidr string) {
 	// 	log.Fatal("ERROR: No cidr availables")
 	// }
 	return
+}
+
+// GetLatestAmi returns the amiID of the passed name tag, if there are duplicates it returns the newest one.
+// Example on how to use it: myAMI := SearchAmiID(ctx, cfg, "coolest-tag")
+func SearchAmiID(ctx *context.Context, cfg *aws.Config, amiNameTag string) string {
+	ec2Client := ec2.NewFromConfig(*cfg)
+	filtro := &ec2.DescribeImagesInput{
+		Filters: []types.Filter{
+			{
+				Name:   aws.String("tag:Name"),
+				Values: []string{amiNameTag},
+			},
+		},
+	}
+
+	getAMIs, err := ec2Client.DescribeImages(*ctx, filtro)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	amiList := make(map[string]string, 0)
+	if len(getAMIs.Images) == 0 {
+		log.Fatalf("\n\n\nERROR: No images were found containing the tag Name: %s\n\n\n", amiNameTag)
+	}
+	for _, v := range getAMIs.Images {
+		amiList[*v.CreationDate] = *v.ImageId
+	}
+
+	cDate := make([]string, 0)
+
+	for date, _ := range amiList {
+		cDate = append(cDate, date)
+	}
+	maxDate := cDate[0]
+	for _, sDate := range cDate {
+		if sDate > maxDate {
+			maxDate = sDate
+		}
+	}
+	return amiList[maxDate]
+}
+
+// DeregisterAmiId attetmps to deregister the passed ami
+// example on how to use it with the help of the SearchAmiID()
+// myAMI := SearchAmiID(ctx, cfg, "coolest-tag")
+// DeregisterAmiId(*ctx, *cfg, &myAMI)
+func DeregisterAmiId(ctx context.Context, cfg aws.Config, amiID *string) {
+	ec2Client := ec2.NewFromConfig(cfg)
+	filtro := &ec2.DeregisterImageInput{
+		ImageId: amiID,
+	}
+	_, err := ec2Client.DeregisterImage(ctx, filtro)
+	CheckAWSError(err)
+	log.Printf("AMI ID %s was successfully deregistered", *amiID)
+}
+
+func CheckAWSError(err error) {
+	if err != nil {
+		var ae smithy.APIError
+		var re *awshttp.ResponseError
+		if errors.As(err, &ae) {
+			log.Printf("Failure Code: %s, Message: %s, Fault is on: %s", ae.ErrorCode(), ae.ErrorMessage(), ae.ErrorFault().String())
+			if errors.As(err, &re) {
+				log.Fatalf("requestID: %s", re.ServiceRequestID())
+			}
+		}
+		return
+	}
 }

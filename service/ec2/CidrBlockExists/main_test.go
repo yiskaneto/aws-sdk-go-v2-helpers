@@ -20,6 +20,6 @@ func TestSearchAmiID(t *testing.T) {
 		flag.CommandLine.Usage()
 		log.Fatal("\nERROR: The --ami-name-tag-value must be filled with the correct value, example: --ami-name-tag-value \"RHEL 9.1-internal\"")
 	}
-	verticaAMI := SearchAmiID(ctx, cfg, amiNameTagValue)
-	log.Println(verticaAMI)
+	imageAMI := SearchAmiID(ctx, cfg, amiNameTagValue)
+	log.Println(imageAMI)
 }

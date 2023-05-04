@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/aws/smithy-go"
 	"golang.org/x/exp/slices"
 )
@@ -211,6 +212,23 @@ func RemoveAmiId(ctx context.Context, cfg aws.Config, amiID *string) {
 	_, err := ec2Client.DeregisterImage(ctx, filtro)
 	CheckAWSError(err)
 	log.Printf("AMI ID %s was successfully deregistered", *amiID)
+}
+
+// AWSLoadCreds loads AWS conf file from ~/.aws or environment variables.
+func AWSLoadCreds() (string, *aws.Config, *context.Context) {
+	ctx := context.TODO()
+	cfg, err := config.LoadDefaultConfig(ctx)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	if aws.ToString(&cfg.Region) == "" {
+		log.Fatal("ERROR: Cannot read the AWS credentials on ~/.aws  nor from the environmental variables,verify that you have authenticated")
+	}
+
+	svc := sts.NewFromConfig(cfg)
+	testout, err := svc.GetCallerIdentity(ctx, &sts.GetCallerIdentityInput{})
+	CheckAWSError(err)
+	return *testout.Account, &cfg, &ctx
 }
 
 func CheckAWSError(err error) {

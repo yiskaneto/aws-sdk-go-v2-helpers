@@ -67,10 +67,11 @@ func main() {
 	// GetNewCidrBlock(vpcDescribe)
 }
 
-func vpcExistWithTagNameValue(ctx context.Context, cfg aws.Config, vpcTag, tagValue string) string {
+// vpcExistWithTagNameValue checks wether a vpc exists with the provided tag value as well as with the tag value.
+func vpcExistWithTagNameValue(ctx context.Context, cfg aws.Config, vpcTag, tagValue string) bool {
 	ec2Client := ec2.NewFromConfig(cfg)
-	// Create the DescribeVpcsInput with a filter
 	tagAssigment := fmt.Sprintf("tag:%s", vpcTag)
+	// Create the DescribeVpcsInput with a filter
 	filtro := &ec2.DescribeVpcsInput{
 		Filters: []types.Filter{
 			{
@@ -82,9 +83,11 @@ func vpcExistWithTagNameValue(ctx context.Context, cfg aws.Config, vpcTag, tagVa
 	getVpcTagName, err := ec2Client.DescribeVpcs(ctx, filtro)
 	CheckAWSError(err)
 	if len(getVpcTagName.Vpcs) >= 1 {
-		return "There is already vpc with the passed tag name value, skipping"
+		log.Println("There is already a vpc with the passed tag name and tag value, skipping")
+		return false
 	} else {
-		return "No vpc found with the provided name tag value"
+		log.Println("No vpc found with the provided tag not tag value")
+		return true
 	}
 }
 

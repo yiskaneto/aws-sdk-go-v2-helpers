@@ -36,11 +36,13 @@ func main() {
 	cfg, err := config.LoadDefaultConfig(ctx)
 	CheckAWSError(err)
 
-	// Initialize ec2 client
-	ec2Client := ec2.NewFromConfig(cfg)
+	// // Initialize ec2 client
+	// ec2Client := ec2.NewFromConfig(cfg)
 
-	// Optionallu, we can create an empty Input object
-	filtro := &ec2.DescribeVpcsInput{}
+	log.Println(vpcExistTagNameValue(ctx, cfg, "allowOpsTeam", "true"))
+
+	// // Optionallu, we can create an empty Input object
+	// filtro := &ec2.DescribeVpcsInput{}
 
 	// Or we can create the DescribeVpcsInput with a filter
 	// filtro := &ec2.DescribeVpcsInput{
@@ -52,17 +54,38 @@ func main() {
 	// 	},
 	// }
 
-	// Now we attempt to fetch the vpc information in the current region
-	vpcDescribe, err := ec2Client.DescribeVpcs(ctx, filtro)
-	CheckAWSError(err)
+	// // Now we attempt to fetch the vpc information in the current region
+	// vpcDescribe, err := ec2Client.DescribeVpcs(ctx, filtro)
+	// CheckAWSError(err)
 
-	// Get the current subnets and their vpc associations.
-	currentCidrBlocks := make([]string, 0)
-	for _, v := range vpcDescribe.Vpcs {
-		vpcInfo := fmt.Sprintf("%s associated to %s", *v.CidrBlock, *v.VpcId)
-		currentCidrBlocks = append(currentCidrBlocks, vpcInfo)
+	// // Get the current subnets and their vpc associations.
+	// currentCidrBlocks := make([]string, 0)
+	// for _, v := range vpcDescribe.Vpcs {
+	// 	vpcInfo := fmt.Sprintf("%s associated to %s", *v.CidrBlock, *v.VpcId)
+	// 	currentCidrBlocks = append(currentCidrBlocks, vpcInfo)
+	// }
+	// GetNewCidrBlock(vpcDescribe)
+}
+
+func vpcExistWithTagNameValue(ctx context.Context, cfg aws.Config, vpcTag, tagValue string) string {
+	ec2Client := ec2.NewFromConfig(cfg)
+	// Create the DescribeVpcsInput with a filter
+	tagAssigment := fmt.Sprintf("tag:%s", vpcTag)
+	filtro := &ec2.DescribeVpcsInput{
+		Filters: []types.Filter{
+			{
+				Name:   aws.String(tagAssigment),
+				Values: []string{tagValue},
+			},
+		},
 	}
-	GetNewCidrBlock(vpcDescribe)
+	getVpcTagName, err := ec2Client.DescribeVpcs(ctx, filtro)
+	CheckAWSError(err)
+	if len(getVpcTagName.Vpcs) >= 1 {
+		return "There is already vpc with the passed tag name value, skipping"
+	} else {
+		return "No vpc found with the provided name tag value"
+	}
 }
 
 func CheckCidrBlock(filter *ec2.DescribeVpcsOutput, currentCidrBlocks []string) string {

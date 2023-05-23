@@ -39,7 +39,7 @@ func main() {
 	// // Initialize ec2 client
 	// ec2Client := ec2.NewFromConfig(cfg)
 
-	log.Println(vpcExistTagNameValue(ctx, cfg, "allowOpsTeam", "true"))
+	log.Println(vpcExistWithTagNameValue(ctx, cfg, "allowOpsTeam", "true"))
 
 	// // Optionallu, we can create an empty Input object
 	// filtro := &ec2.DescribeVpcsInput{}

@@ -16,5 +16,5 @@ func DescribeSecret(ctx context.Context, cfg aws.Config, secretID *string) {
 	}
 	secretOutput, err := secretManagerClient.DescribeSecret(ctx, filtro)
 	helper_errors.CheckAWSError(err)
-	log.Printf("The secret %s is accessible", secretID, *secretOutput.Description)
+	log.Printf("The %s secret is accessible and it has the folowwing description: %v", *secretID, *secretOutput.Description)
 }

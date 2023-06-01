@@ -15,5 +15,5 @@ func TestDescribeSecret(t *testing.T) {
 	if err != nil {
 		log.Fatal("error")
 	}
-	DescribeSecret(ctx, cfg, aws.String("us-west-1-terratest-tenant-onboarding-4wul21-aaf-server-root-ca"))
+	DescribeSecret(ctx, cfg, aws.String("us-west-1-oicd-cert"))
 }

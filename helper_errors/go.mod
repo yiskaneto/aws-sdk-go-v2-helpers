@@ -1,4 +1,4 @@
-module github.com/escanoru/aws-sdk-go-v2-helpers
+module github.com/escanoru/aws-sdk-go-v2-helpers/helper_errors
 
 go 1.20
 

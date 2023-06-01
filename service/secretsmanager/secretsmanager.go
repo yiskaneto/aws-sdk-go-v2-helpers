@@ -9,6 +9,7 @@ import (
 	"github.com/escanoru/aws-sdk-go-v2-helpers/helper_errors"
 )
 
+// DescribeSecret attempts to find and get the description of the passed secret
 func DescribeSecret(ctx context.Context, cfg aws.Config, secretID *string) {
 	secretManagerClient := secretsmanager.NewFromConfig(cfg)
 	filtro := &secretsmanager.DescribeSecretInput{

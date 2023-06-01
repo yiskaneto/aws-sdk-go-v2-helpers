@@ -10,14 +10,8 @@ import (
 	"github.com/escanoru/aws-sdk-go-v2-helpers/tree/main/helper_errors"
 )
 
-func TestDescribeSecret(t, ctx context.Context, cfg aws.Config, secretID *string) {
+func TestDescribeSecret(t) {
 	ctx := context.TODO()
 	cfg, err := config.LoadDefaultConfig(ctx)
-	secretManagerClient := secretsmanager.NewFromConfig(cfg)
-	filtro := &secretsmanager.DescribeSecretInput{
-		SecretId: secretID,
-	}
-	secretOutput, err := secretManagerClient.DescribeSecret(ctx, filtro)
-	helper_errors.CheckAWSError(err)
-	log.Printf("AMI ID %s was successfully deregistered", *secretID)
+	DescribeSecret()
 }

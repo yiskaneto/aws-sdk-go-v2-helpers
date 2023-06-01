@@ -6,12 +6,14 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	"github.com/escanoru/aws-sdk-go-v2-helpers/tree/main/helper_errors"
+	"github.com/aws/aws-sdk-go-v2/config"
 )
 
-func TestDescribeSecret(t) {
+func TestDescribeSecret(t *testing.T) {
 	ctx := context.TODO()
 	cfg, err := config.LoadDefaultConfig(ctx)
-	DescribeSecret()
+	if err != nil {
+		log.Fatal("error")
+	}
+	DescribeSecret(ctx, cfg, aws.String("us-west-1-terratest-tenant-onboarding-4wul21-aaf-server-root-ca"))
 }

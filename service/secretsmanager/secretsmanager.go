@@ -16,5 +16,5 @@ func DescribeSecret(ctx context.Context, cfg aws.Config, secretID *string) {
 	}
 	secretOutput, err := secretManagerClient.DescribeSecret(ctx, filtro)
 	helper_errors.CheckAWSError(err)
-	log.Printf("AMI ID %s was successfully deregistered", *secretOutput.)
+	log.Printf("The secret %s is accessible", secretID, *secretOutput.Description)
 }

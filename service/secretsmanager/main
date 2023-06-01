@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/escanoru/aws-sdk-go-v2-helpers/tree/main/errors"
 )
 
 func DescribeSecret(ctx context.Context, cfg aws.Config, amiID *string) {
@@ -14,6 +15,7 @@ func DescribeSecret(ctx context.Context, cfg aws.Config, amiID *string) {
 		ImageId: amiID,
 	}
 	_, err := ec2Client.DeregisterImage(ctx, filtro)
-	CheckAWSError(err)
+	errors.CheckAWSError(err)
 	log.Printf("AMI ID %s was successfully deregistered", *amiID)
+	errors.
 }

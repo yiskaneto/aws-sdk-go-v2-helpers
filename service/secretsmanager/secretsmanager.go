@@ -10,12 +10,15 @@ import (
 )
 
 // DescribeSecret attempts to find and get the description of the passed secret
-func DescribeSecret(ctx context.Context, cfg aws.Config, secretID *string) {
+func DescribeSecret(ctx context.Context, cfg aws.Config, secretID *string) (bool, error) {
 	secretManagerClient := secretsmanager.NewFromConfig(cfg)
 	filtro := &secretsmanager.DescribeSecretInput{
 		SecretId: secretID,
 	}
 	secretOutput, err := secretManagerClient.DescribeSecret(ctx, filtro)
-	helper_errors.CheckAWSError(err)
+	if err != nil {
+		return false, helper_errors.CheckAWSError(err)
+	}
 	log.Printf("The %s secret is accessible and it has the folowwing description: %v", *secretID, *secretOutput.Description)
+	return true, nil
 }

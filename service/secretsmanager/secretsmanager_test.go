@@ -15,5 +15,9 @@ func TestDescribeSecret(t *testing.T) {
 	if err != nil {
 		log.Fatal("error")
 	}
-	DescribeSecret(ctx, cfg, aws.String("us-west-1-oicd-cert"))
+	expected := true
+	got, _ := DescribeSecret(ctx, cfg, aws.String("us-west-1-oicd-cert"))
+	if expected != got {
+		t.Errorf("Expected: %v. Got: %v", expected, got)
+	}
 }

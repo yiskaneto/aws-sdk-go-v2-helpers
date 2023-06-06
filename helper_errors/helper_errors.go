@@ -8,6 +8,7 @@ import (
 	"github.com/aws/smithy-go"
 )
 
+// CheckAWSError check if the passed error is nil, if not then we check the type of error, it returns an error
 func CheckAWSError(err error) error {
 	if err != nil {
 		var ae smithy.APIError

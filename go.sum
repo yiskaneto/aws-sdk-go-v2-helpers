@@ -34,5 +34,5 @@ github.com/aws/aws-sdk-go-v2/service/sts v1.30.3 h1:ZsDKRLXGWHk8WdtyYMoGNO7bTudr
 github.com/aws/aws-sdk-go-v2/service/sts v1.30.3/go.mod h1:zwySh8fpFyXp9yOr/KVzxOl8SRqgf/IDw5aUt9UKFcQ=
 github.com/aws/smithy-go v1.20.3 h1:ryHwveWzPV5BIof6fyDvor6V3iUL7nTfiTKXHiW05nE=
 github.com/aws/smithy-go v1.20.3/go.mod h1:krry+ya/rV9RDcV/Q16kpu6ypI4K2czasz0NC3qS14E=
-github.com/yiskaneto/aws-sdk-go-v2-helpers/service/s3 v0.0.0-20240726182957-4ecfe5a0ddc8 h1:AE4emIoV7BlEa3Y/RZ/rMS+yoC0Jcar0hKZiccpOIB4=
-github.com/yiskaneto/aws-sdk-go-v2-helpers/service/s3 v0.0.0-20240726182957-4ecfe5a0ddc8/go.mod h1:POHxl2nNKlVnTLg0YdBYVZx3f3CDHsCXQUFMWOgtyiU=
+github.com/yiskaneto/aws-sdk-go-v2-helpers/service/s3 v0.0.0-20240726190407-861b2f64e14b h1:xWzamHbzE/Mx28HtKn9X4lRdSEH65AZBiifcZDzyeNc=
+github.com/yiskaneto/aws-sdk-go-v2-helpers/service/s3 v0.0.0-20240726190407-861b2f64e14b/go.mod h1:POHxl2nNKlVnTLg0YdBYVZx3f3CDHsCXQUFMWOgtyiU=

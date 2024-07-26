@@ -1,0 +1,56 @@
+name: Create Release
+on:
+  pull_request:
+    branches: ["main"]
+    types: ["opened", "synchronize", "edited", "closed"]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  semantic-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: PaulHatch/semantic-version@v5.4.0
+        id: generate-version
+        with:
+            tag_prefix: "v"
+            major_pattern: "(MAJOR)"
+            minor_pattern: "(MINOR)"
+            version_format: ${major}.${minor}.${patch}
+
+    outputs:
+      version_tag: ${{ steps.generate-version.outputs.version_tag }}
+
+  release:
+    if: github.event.pull_request.merged == true
+    needs: [semantic-version]
+    runs-on: ubuntu-latest
+    env:
+      TARGET_TAG: "${{ needs.semantic-version.outputs.version_tag }}"
+    steps:
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ env.TARGET_TAG }}" \
+              --repo="${GITHUB_REPOSITORY}" \
+              --title="${{ env.TARGET_TAG }}" \
+              --generate-notes \
+              --notes "- Leaving note as an example of manual notes" || echo "Release already exists, proceeding to edit release notes" \
+          gh release edit "${{ env.TARGET_TAG }}" \
+              --repo="${GITHUB_REPOSITORY}" \
+              --notes "- Leaving note as an example of manual notes"
+
+      - name: Generate Summary
+        if: always()
+        run: |
+          cat > $GITHUB_STEP_SUMMARY << EOL
+          ## Create Release (Only generated when merging a PR to main)
+          New Release 🔗: [${{ env.TARGET_TAG }}](${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.TARGET_TAG }})
+          EOL

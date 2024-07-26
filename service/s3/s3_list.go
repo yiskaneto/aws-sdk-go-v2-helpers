@@ -12,7 +12,7 @@ import (
 // (Amazon S3) client and list up to 10 buckets in your account.
 // This example uses the default settings specified in your shared credentials
 // and config files.
-func s3_list_n_buckets(nBuckets int) {
+func S3_list_n_buckets(nBuckets int) {
 	sdkConfig, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		fmt.Println("Couldn't load default configuration. Have you set up your AWS account?")

@@ -6,7 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	"github.com/escanoru/aws-sdk-go-v2-helpers/helper_errors"
+	"github.com/yiskaneto/aws-sdk-go-v2-helpers/helper_errors"
 )
 
 // DescribeSecret attempts to find and get the description of the passed secret

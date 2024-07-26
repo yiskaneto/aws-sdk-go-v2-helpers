@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-	yiska_aws_helpers.S3_list_n_buckets()
+	yiska_aws_helpers.ListNBuckets(10)
 	fmt.Println("Test")
 }

@@ -1,4 +1,4 @@
-module github.com/yiskaneto/aws-sdk-go-v2-helper/service/s3
+module github.com/yiskaneto/aws-sdk-go-v2-helpers/service/s3
 
 go 1.22.2
 

@@ -9,7 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
-	"github.com/yiskaneto/aws-sdk-go-v2-helpers/helper_errors"
+	"github.com/yiskaneto/aws-sdk-go-v2-helperss/helper_errors"
 	"golang.org/x/exp/slices"
 )
 

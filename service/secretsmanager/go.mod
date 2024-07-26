@@ -1,4 +1,4 @@
-module github.com/escanoru/aws-sdk-go-v2-helpers/secretsmanager
+module github.com/yiskaneto/aws-sdk-go-v2-helpers/secretsmanager
 
 go 1.20
 
@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.18.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.25
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.8
-	github.com/escanoru/aws-sdk-go-v2-helpers/helper_errors v0.0.0-20230606000136-78ff0b577640
+	github.com/yiskaneto/aws-sdk-go-v2-helpers/helper_errors v0.0.0-20230606000136-78ff0b577640
 )
 
 require (

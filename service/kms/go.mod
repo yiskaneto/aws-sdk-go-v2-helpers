@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.18.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.25
 	github.com/aws/aws-sdk-go-v2/service/kms v1.22.0
-	github.com/escanoru/aws-sdk-go-v2-helpers/helper_errors v0.0.0-20230606022215-f0397cc6c72b
+	github.com/yiskaneto/aws-sdk-go-v2-helpers/helper_errors v0.0.0-20230606022215-f0397cc6c72b
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
 )
 

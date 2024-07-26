@@ -1,3 +1,3 @@
-module github.com/escanoru/aws-sdk-go-v2-helper
+module github.com/yiskaneto/aws-sdk-go-v2-helper
 
 go 1.20

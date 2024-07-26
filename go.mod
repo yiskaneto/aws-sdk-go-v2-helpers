@@ -2,7 +2,7 @@ module github.com/yiskaneto/aws-sdk-go-v2-helpers
 
 go 1.22.2
 
-require github.com/yiskaneto/aws-sdk-go-v2-helperss/service/s3 v0.0.0-20240726182957-4ecfe5a0ddc8
+require github.com/yiskaneto/aws-sdk-go-v2-helpers/service/s3 v0.0.0-20240726182957-4ecfe5a0ddc8
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.3 // indirect
